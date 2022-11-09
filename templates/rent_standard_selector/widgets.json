@@ -1,0 +1,41 @@
+{
+   "mybooking_global_topbar_right":{
+      "nav_menu-3":{
+         "nav_menu":4
+      }
+   },
+   "mybooking_home_izquierda":{
+      "mybooking_rent_engine_selector_widget-3":[
+         
+      ]
+   },
+   "mybooking_home_derecha":{
+      "custom_html-3":{
+         "title":"",
+         "content":"<h2 class=\"display-4\" style=\"font-weight: bolder\">\r\nLorem ipsum dolor sit amet\r\n<\/h2>\r\n<p class=\"lead\">\r\nAenean laoreet nibh vitae risus pellentesque porttitor. In hac habitasse platea dictumst. Phasellus purus mauris, dignissim eu bibendum ut, consectetur vitae quam.\r\n<\/p>",
+         "pll_lang":"es"
+      }
+   },
+   "blog_sidebar":{
+      "search-2":{
+         "title":""
+      },
+      "recent-posts-2":{
+         "title":"",
+         "number":5
+      },
+      "categories-3":{
+         "title":"",
+         "count":0,
+         "hierarchical":0,
+         "dropdown":0
+      }
+   },
+   "mybooking_global_footer_2":{
+      "nav_menu-5":{
+         "title":"Legal",
+         "nav_menu":22,
+         "pll_lang":"es"
+      }
+   }
+}

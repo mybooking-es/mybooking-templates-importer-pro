@@ -1,12 +1,12 @@
 <?php
 /**
- * Class for the Redux importer used in the MyBooking Templates Importer plugin.
+ * Class for the Redux importer used in the One Click Demo Import plugin.
  *
  * @see https://wordpress.org/plugins/redux-framework/
- * @package mybooking-templates-importer
+ * @package ocdi
  */
 
-namespace MybookingTemplatesImporter;
+namespace OCDI;
 
 class ReduxImporter {
 	/**
@@ -15,21 +15,21 @@ class ReduxImporter {
 	 * @param array $import_data Array of arrays. Child array contains 'option_name' and 'file_path'.
 	 */
 	public static function import( $import_data ) {
-		$mybookingTemplatesImporter = MybookingTemplatesImport::get_instance();
-		$log_file_path = $mybookingTemplatesImporter->get_log_file_path();
+		$ocdi          = OneClickDemoImport::get_instance();
+		$log_file_path = $ocdi->get_log_file_path();
 
 		// Redux plugin is not active!
 		if ( ! class_exists( 'ReduxFramework' ) ) {
-			$error_message = esc_html__( 'The Redux plugin is not activated, so the Redux import was skipped!', 'mybooking-templates-importer' );
+			$error_message = esc_html__( 'The Redux plugin is not activated, so the Redux import was skipped!', 'pt-ocdi' );
 
-			// Add any error messages to the frontend_error_messages variable in MybookingTemplatesImporter main class.
-			$mybookingTemplatesImporter->append_to_frontend_error_messages( $error_message );
+			// Add any error messages to the frontend_error_messages variable in OCDI main class.
+			$ocdi->append_to_frontend_error_messages( $error_message );
 
 			// Write error to log file.
 			Helpers::append_to_file(
 				$error_message,
 				$log_file_path,
-				esc_html__( 'Importing Redux settings' , 'mybooking-templates-importer' )
+				esc_html__( 'Importing Redux settings' , 'pt-ocdi' )
 			);
 
 			return;
@@ -48,22 +48,22 @@ class ReduxImporter {
 
 				// Add this message to log file.
 				$log_added = Helpers::append_to_file(
-					sprintf( esc_html__( 'Redux settings import for: %s finished successfully!', 'mybooking-templates-importer' ), $redux_item['option_name'] ),
+					sprintf( esc_html__( 'Redux settings import for: %s finished successfully!', 'pt-ocdi' ), $redux_item['option_name'] ),
 					$log_file_path,
-					esc_html__( 'Importing Redux settings' , 'mybooking-templates-importer' )
+					esc_html__( 'Importing Redux settings' , 'pt-ocdi' )
 				);
 			}
 			else {
-				$error_message = sprintf( esc_html__( 'The Redux option name: %s, was not found in this WP site, so it was not imported!', 'mybooking-templates-importer' ), $redux_item['option_name'] );
+				$error_message = sprintf( esc_html__( 'The Redux option name: %s, was not found in this WP site, so it was not imported!', 'pt-ocdi' ), $redux_item['option_name'] );
 
-				// Add any error messages to the frontend_error_messages variable in MybookingTemplatesImporter main class.
-				$mybookingTemplatesImporter->append_to_frontend_error_messages( $error_message );
+				// Add any error messages to the frontend_error_messages variable in OCDI main class.
+				$ocdi->append_to_frontend_error_messages( $error_message );
 
 				// Write error to log file.
 				Helpers::append_to_file(
 					$error_message,
 					$log_file_path,
-					esc_html__( 'Importing Redux settings' , 'mybooking-templates-importer' )
+					esc_html__( 'Importing Redux settings' , 'pt-ocdi' )
 				);
 			}
 		}

@@ -4,12 +4,12 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInity5l2zfccjec73xevbsroq4l1oa8xh7tg
+class ComposerStaticInitef3a658a88d521398d72929dc54fa111
 {
     public static $prefixLengthsPsr4 = array (
-        'M' => 
+        'O' => 
         array (
-            'MybookingTemplatesImporter\\' => 27,
+            'OCDI\\' => 5,
         ),
         'A' => 
         array (
@@ -18,7 +18,7 @@ class ComposerStaticInity5l2zfccjec73xevbsroq4l1oa8xh7tg
     );
 
     public static $prefixDirsPsr4 = array (
-        'MybookingTemplatesImporter\\' => 
+        'OCDI\\' => 
         array (
             0 => __DIR__ . '/../..' . '/inc',
         ),
@@ -31,8 +31,8 @@ class ComposerStaticInity5l2zfccjec73xevbsroq4l1oa8xh7tg
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInity5l2zfccjec73xevbsroq4l1oa8xh7tg::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInity5l2zfccjec73xevbsroq4l1oa8xh7tg::$prefixDirsPsr4;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitef3a658a88d521398d72929dc54fa111::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitef3a658a88d521398d72929dc54fa111::$prefixDirsPsr4;
 
         }, null, ClassLoader::class);
     }

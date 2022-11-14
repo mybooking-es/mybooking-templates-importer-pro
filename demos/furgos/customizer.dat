@@ -1,0 +1,76 @@
+a:4:{s:8:"template";s:9:"mybooking";s:4:"mods";a:31:{i:0;b:0;s:18:"nav_menu_locations";a:1:{s:7:"primary";i:3;}s:18:"custom_css_post_id";i:266;s:30:"mybooking_home_header_image_bg";s:105:"http://mb-furgos.mybookingcloud.com/wp-content/uploads/sites/131/2022/10/AdobeStock_96682628_Preview.jpeg";s:31:"mybooking_global_footer_credits";s:83:"Mybooking Basic Furgos | Powered by <a href="https://mybooking.es">mybooking.es</a>";s:23:"mybooking_brand_primary";s:7:"#326e44";s:29:"mybooking_brand_primary_light";s:7:"#326e44";s:28:"mybooking_brand_primary_dark";s:7:"#004419";s:25:"mybooking_brand_secondary";s:7:"#004419";s:33:"mybooking_navbar_link_hover_color";s:7:"#004419";s:28:"mybooking_navbar_link_active";s:7:"#004419";s:33:"mybooking_footer_link_hover_color";s:7:"#004419";s:24:"mybooking_home_topbar_bg";s:7:"#004419";s:19:"mybooking_topbar_bg";s:7:"#004419";s:11:"custom_logo";i:21;s:33:"mybooking_company_info_trade_name";s:16:"Nombre comercial";s:27:"mybooking_company_info_name";s:12:"Nombre legal";s:28:"mybooking_company_vat_number";s:7:"B000000";s:25:"mybooking_company_address";s:17:"Dirección postal";s:30:"mybooking_company_phone_number";s:15:"+34 000 000 000";s:31:"mybooking_company_mobile_number";s:15:"+34 000 000 000";s:23:"mybooking_company_email";s:19:"email@decontacto.es";s:29:"mybooking_company_twitter_url";s:1:"#";s:30:"mybooking_company_facebook_url";s:1:"#";s:31:"mybooking_company_instagram_url";s:1:"#";s:30:"mybooking_company_linkedin_url";s:1:"#";s:29:"mybooking_company_youtube_url";s:1:"#";s:30:"mybooking_global_footer_layout";s:1:"0";s:36:"mybooking_sticky_selector_background";s:7:"#326e44";s:27:"mybooking_header_brightness";i:70;s:28:"mybooking_home_header_layout";s:1:"2";}s:7:"options";a:2:{s:9:"site_icon";s:1:"0";s:23:"nav_menus_created_posts";a:0:{}}s:6:"wp_css";s:1321:".mybooking-headline {
+	color: var(--font-heading-color);
+	font-size: 2.5rem;
+	font-weight: 800;
+	line-height: 1;
+	text-align: center!important;
+}
+
+.mybooking-lead {
+	font-size: 1.6em;
+	line-height: 1.4;
+	text-align: center!important;
+}
+
+.home .flex-form {
+  background-color: transparent;
+	padding: 0 2rem;
+}
+
+.flex-form-sticky label {
+  color: white;
+}
+
+.flex-form-box .btn {
+  border-radius: 50px;
+}
+
+.flex-form-sticky .flex-form-box .btn {
+	background-color: white;
+	color: var(--brand-primary);
+	margin: 0 10px;
+}
+
+.flex-form-sticky {
+  min-width: 96.5% !important;
+	max-width: 90%!important;
+	padding: 1rem 2rem!important;
+	margin: 2rem;
+}
+
+@media ( min-width:991.98px ) {
+	.home .nav-container-absolute .custom-logo-link img,
+	.home .nav-container-absolute .site-description {
+       filter: brightness(0) invert(1);
+    }
+}
+
+@media ( min-width: 575.98px ) {
+	.mybooking-headline {
+		font-size: 2.5rem;
+		text-align: center!important;
+	}
+	.mybooking-lead {
+		text-align: center!important;
+	}
+	.home .flex-form {
+		padding: 0 3rem 2rem;
+	}
+}
+
+@media ( min-width: 991.98px ) {
+	.mybooking-headline {
+		font-size: 3.5rem;
+		text-align: left!important;
+	}
+	.mybooking-lead {
+		text-align: left!important;
+	}
+	.home .flex-form {
+		background-color: var(--home-selector-bg);
+		padding: 2rem;
+		border-radius: 10px;
+	}
+}
+
+";}

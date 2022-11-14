@@ -1,14 +1,14 @@
 <?php
 /**
- * Class for the customizer importer used in the MyBooking Templates Importer plugin.
+ * Class for the customizer importer used in the One Click Demo Import plugin.
  *
  * Code is mostly from the Customizer Export/Import plugin.
  *
  * @see https://wordpress.org/plugins/customizer-export-import/
- * @package mybooking-templates-importer
+ * @package ocdi
  */
 
-namespace MybookingTemplatesImporter;
+namespace OCDI;
 
 class CustomizerImporter {
 	/**
@@ -17,8 +17,8 @@ class CustomizerImporter {
 	 * @param string $customizer_import_file_path path to the customizer import file.
 	 */
 	public static function import( $customizer_import_file_path ) {
-		$mybookingTemplatesImporter = MybookingTemplatesImport::get_instance();
-		$log_file_path = $mybookingTemplatesImporter->get_log_file_path();
+		$ocdi          = OneClickDemoImport::get_instance();
+		$log_file_path = $ocdi->get_log_file_path();
 
 		// Try to import the customizer settings.
 		$results = self::import_customizer_options( $customizer_import_file_path );
@@ -27,22 +27,22 @@ class CustomizerImporter {
 		if ( is_wp_error( $results ) ) {
 			$error_message = $results->get_error_message();
 
-			// Add any error messages to the frontend_error_messages variable in MybookingTemplatesImporter main class.
-			$mybookingTemplatesImporter->append_to_frontend_error_messages( $error_message );
+			// Add any error messages to the frontend_error_messages variable in OCDI main class.
+			$ocdi->append_to_frontend_error_messages( $error_message );
 
 			// Write error to log file.
 			Helpers::append_to_file(
 				$error_message,
 				$log_file_path,
-				esc_html__( 'Importing customizer settings', 'mybooking-templates-importer' )
+				esc_html__( 'Importing customizer settings', 'pt-ocdi' )
 			);
 		}
 		else {
 			// Add this message to log file.
 			$log_added = Helpers::append_to_file(
-				esc_html__( 'Customizer settings import finished!', 'mybooking-templates-importer' ),
+				esc_html__( 'Customizer settings import finished!', 'pt-ocdi' ),
 				$log_file_path,
-				esc_html__( 'Importing customizer settings' , 'mybooking-templates-importer' )
+				esc_html__( 'Importing customizer settings' , 'pt-ocdi' )
 			);
 		}
 	}
@@ -70,7 +70,7 @@ class CustomizerImporter {
 			return new \WP_Error(
 				'missing_cutomizer_import_file',
 				sprintf(
-					esc_html__( 'Error: The customizer import file is missing! File path: %s', 'mybooking-templates-importer' ),
+					esc_html__( 'Error: The customizer import file is missing! File path: %s', 'pt-ocdi' ),
 					$import_file_path
 				)
 			);
@@ -90,18 +90,18 @@ class CustomizerImporter {
 		if ( ! is_array( $data ) && ( ! isset( $data['template'] ) || ! isset( $data['mods'] ) ) ) {
 			return new \WP_Error(
 				'customizer_import_data_error',
-				esc_html__( 'Error: The customizer import file is not in a correct format. Please make sure to use the correct customizer import file.', 'mybooking-templates-importer' )
+				esc_html__( 'Error: The customizer import file is not in a correct format. Please make sure to use the correct customizer import file.', 'pt-ocdi' )
 			);
 		}
 		if ( $data['template'] !== $template ) {
 			return new \WP_Error(
 				'customizer_import_wrong_theme',
-				esc_html__( 'Error: The customizer import file is not suitable for current theme. You can only import customizer settings for the same theme or a child theme.', 'mybooking-templates-importer' )
+				esc_html__( 'Error: The customizer import file is not suitable for current theme. You can only import customizer settings for the same theme or a child theme.', 'pt-ocdi' )
 			);
 		}
 
 		// Import images.
-		if ( apply_filters( 'mybooking-templates-importer/customizer_import_images', true ) ) {
+		if ( apply_filters( 'pt-ocdi/customizer_import_images', true ) ) {
 			$data['mods'] = self::import_customizer_images( $data['mods'] );
 		}
 
@@ -124,7 +124,7 @@ class CustomizerImporter {
 		}
 
 		// Should the customizer import use the WP customize_save* hooks?
-		$use_wp_customize_save_hooks = apply_filters( 'mybooking-templates-importer/enable_wp_customize_save_hooks', false );
+		$use_wp_customize_save_hooks = apply_filters( 'pt-ocdi/enable_wp_customize_save_hooks', false );
 
 		if ( $use_wp_customize_save_hooks ) {
 			do_action( 'customize_save', $wp_customize );

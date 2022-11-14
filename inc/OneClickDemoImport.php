@@ -1,16 +1,16 @@
 <?php
 /**
- * Main MyBooking Templates Importer plugin class/file.
+ * Main One Click Demo Import plugin class/file.
  *
- * @package mybooking-templates-importer
+ * @package ocdi
  */
 
-namespace MybookingTemplatesImporter;
+namespace OCDI;
 
 /**
- * MyBooking Templates Importer class
+ * One Click Demo Import class, so we don't have to worry about namespaces.
  */
-class MybookingTemplatesImport {
+class OneClickDemoImport {
 	/**
 	 * The instance *Singleton* of this class
 	 *
@@ -19,7 +19,7 @@ class MybookingTemplatesImport {
 	private static $instance;
 
 	/**
-	 * The instance of the MybookingTemplatesImporter\Importer class.
+	 * The instance of the OCDI\Importer class.
 	 *
 	 * @var object
 	 */
@@ -74,17 +74,17 @@ class MybookingTemplatesImport {
 	 */
 	private $before_import_executed = false;
 
-	/**
-	 * Make plugin page options available to other methods.
-	 *
-	 * @var array
-	 */
-	private $plugin_page_setup = array();
+  /**
+   * Make plugin page options available to other methods.
+   *
+   * @var array
+   */
+  private $plugin_page_setup = array();
 
 	/**
 	 * Returns the *Singleton* instance of this class.
 	 *
-	 * @return MybookingTemplatesImporter the *Singleton* instance.
+	 * @return OneClickDemoImport the *Singleton* instance.
 	 */
 	public static function get_instance() {
 		if ( null === static::$instance ) {
@@ -104,9 +104,9 @@ class MybookingTemplatesImport {
 		// Actions.
 		add_action( 'admin_menu', array( $this, 'create_plugin_page' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
-		add_action( 'wp_ajax_mybookingTemplatesImporter_import_demo_data', array( $this, 'import_demo_data_ajax_callback' ) );
-		add_action( 'wp_ajax_mybookingTemplatesImporter_import_customizer_data', array( $this, 'import_customizer_data_ajax_callback' ) );
-		add_action( 'wp_ajax_mybookingTemplatesImporter_after_import_data', array( $this, 'after_all_import_data_ajax_callback' ) );
+		add_action( 'wp_ajax_ocdi_import_demo_data', array( $this, 'import_demo_data_ajax_callback' ) );
+		add_action( 'wp_ajax_ocdi_import_customizer_data', array( $this, 'import_customizer_data_ajax_callback' ) );
+		add_action( 'wp_ajax_ocdi_after_import_data', array( $this, 'after_all_import_data_ajax_callback' ) );
 		add_action( 'after_setup_theme', array( $this, 'setup_plugin_with_filter_data' ) );
 		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
 	}
@@ -132,12 +132,12 @@ class MybookingTemplatesImport {
 	 * Creates the plugin page and a submenu item in WP Appearance menu.
 	 */
 	public function create_plugin_page() {
-		$this->plugin_page_setup = apply_filters( 'mybooking-templates-importer/plugin_page_setup', array(
+		$this->plugin_page_setup = apply_filters( 'pt-ocdi/plugin_page_setup', array(
 			'parent_slug' => 'themes.php',
-			'page_title'  => esc_html__( 'Mybooking Templates Importer' , 'mybooking-templates-importer' ),
-			'menu_title'  => esc_html__( 'Mybooking Importer' , 'mybooking-templates-importer' ),
+			'page_title'  => esc_html__( 'Mybooking Importer' , 'pt-ocdi' ),
+			'menu_title'  => esc_html__( 'Mybooking Demos' , 'pt-ocdi' ),
 			'capability'  => 'import',
-			'menu_slug'   => 'mybooking-templates-import',
+			'menu_slug'   => 'pt-one-click-demo-import',
 		) );
 
 		$this->plugin_page = add_submenu_page(
@@ -146,10 +146,10 @@ class MybookingTemplatesImport {
 			$this->plugin_page_setup['menu_title'],
 			$this->plugin_page_setup['capability'],
 			$this->plugin_page_setup['menu_slug'],
-			apply_filters( 'mybooking-templates-importer/plugin_page_display_callback_function', array( $this, 'display_plugin_page' ) )
+			apply_filters( 'pt-ocdi/plugin_page_display_callback_function', array( $this, 'display_plugin_page' ) )
 		);
 
-		register_importer( $this->plugin_page_setup['menu_slug'], $this->plugin_page_setup['page_title'], $this->plugin_page_setup['menu_title'], apply_filters( 'mybooking-templates-importer/plugin_page_display_callback_function', array( $this, 'display_plugin_page' ) ) );
+		register_importer( $this->plugin_page_setup['menu_slug'], $this->plugin_page_setup['page_title'], $this->plugin_page_setup['menu_title'], apply_filters( 'pt-ocdi/plugin_page_display_callback_function', array( $this, 'display_plugin_page' ) ) );
 	}
 
 	/**
@@ -157,7 +157,7 @@ class MybookingTemplatesImport {
 	 * Output (HTML) is in another file.
 	 */
 	public function display_plugin_page() {
-		require_once PT_MybookingTemplatesImporter_PATH . 'views/plugin-page.php';
+		require_once PT_OCDI_PATH . 'views/plugin-page.php';
 	}
 
 
@@ -167,51 +167,50 @@ class MybookingTemplatesImport {
 	 * @param string $hook holds info on which admin page you are currently loading.
 	 */
 	public function admin_enqueue_scripts( $hook ) {
-		$import_get = sanitize_text_field( filter_input( INPUT_GET, 'import' ) );
 		// Enqueue the scripts only on the plugin page.
-		if ( $this->plugin_page === $hook || ( 'admin.php' === $hook && $this->plugin_page_setup['menu_slug'] === $import_get ) ) {
+		if ( $this->plugin_page === $hook || ( 'admin.php' === $hook && $this->plugin_page_setup['menu_slug'] === esc_attr( $_GET['import'] ) ) ) {
 			wp_enqueue_script( 'jquery-ui-dialog' );
 			wp_enqueue_style( 'wp-jquery-ui-dialog' );
 
-			wp_enqueue_script( 'mybooking-templates-importer-main-js', PT_MybookingTemplatesImporter_URL . 'assets/js/main.js' , array( 'jquery', 'jquery-ui-dialog' ), PT_MybookingTemplatesImporter_VERSION );
+			wp_enqueue_script( 'ocdi-main-js', PT_OCDI_URL . 'assets/js/main.js' , array( 'jquery', 'jquery-ui-dialog' ), PT_OCDI_VERSION );
 
 			// Get theme data.
 			$theme = wp_get_theme();
 
-			wp_localize_script( 'mybooking-templates-importer-main-js', 'mybookingTemplatesImporter',
+			wp_localize_script( 'ocdi-main-js', 'ocdi',
 				array(
 					'ajax_url'         => admin_url( 'admin-ajax.php' ),
-					'ajax_nonce'       => wp_create_nonce( 'mybooking-templates-importer-ajax-verification' ),
+					'ajax_nonce'       => wp_create_nonce( 'ocdi-ajax-verification' ),
 					'import_files'     => $this->import_files,
-					'wp_customize_on'  => apply_filters( 'mybooking-templates-importer/enable_wp_customize_save_hooks', false ),
-					'import_popup'     => apply_filters( 'mybooking-templates-importer/enable_grid_layout_import_popup_confirmation', true ),
+					'wp_customize_on'  => apply_filters( 'pt-ocdi/enable_wp_customize_save_hooks', false ),
+					'import_popup'     => apply_filters( 'pt-ocdi/enable_grid_layout_import_popup_confirmation', true ),
 					'theme_screenshot' => $theme->get_screenshot(),
 					'texts'            => array(
-						'missing_preview_image' => esc_html__( 'No preview image defined for this import.', 'mybooking-templates-importer' ),
-						'dialog_title'          => esc_html__( 'Are you sure?', 'mybooking-templates-importer' ),
-						'dialog_no'             => esc_html__( 'Cancel', 'mybooking-templates-importer' ),
-						'dialog_yes'            => esc_html__( 'Yes, import!', 'mybooking-templates-importer' ),
-						'selected_import_title' => esc_html__( 'Selected demo import:', 'mybooking-templates-importer' ),
+						'missing_preview_image' => esc_html__( 'No preview image defined for this import.', 'pt-ocdi' ),
+						'dialog_title'          => esc_html__( 'Are you sure?', 'pt-ocdi' ),
+						'dialog_no'             => esc_html__( 'Cancel', 'pt-ocdi' ),
+						'dialog_yes'            => esc_html__( 'Yes, import!', 'pt-ocdi' ),
+						'selected_import_title' => esc_html__( 'Selected demo import:', 'pt-ocdi' ),
 					),
-					'dialog_options' => apply_filters( 'mybooking-templates-importer/confirmation_dialog_options', array() )
+					'dialog_options' => apply_filters( 'pt-ocdi/confirmation_dialog_options', array() )
 				)
 			);
 
-			wp_enqueue_style( 'mybooking-templates-importer-main-css', PT_MybookingTemplatesImporter_URL . 'assets/css/main.css', array() , PT_MybookingTemplatesImporter_VERSION );
+			wp_enqueue_style( 'ocdi-main-css', PT_OCDI_URL . 'assets/css/main.css', array() , PT_OCDI_VERSION );
 		}
 	}
 
 
 	/**
 	 * Main AJAX callback function for:
-	 * 1). prepare import files (predefined via filters)
+	 * 1). prepare import files (uploaded or predefined via filters)
 	 * 2). execute 'before content import' actions (before import WP action)
 	 * 3). import content
 	 * 4). execute 'after content import' actions (before widget import WP action, widget import, customizer import, after import WP action)
 	 */
 	public function import_demo_data_ajax_callback() {
 		// Try to update PHP memory limit (so that it does not run out of it).
-		ini_set( 'memory_limit', apply_filters( 'mybooking-templates-importer/import_memory_limit', '350M' ) );
+		ini_set( 'memory_limit', apply_filters( 'pt-ocdi/import_memory_limit', '350M' ) );
 
 		// Verify if the AJAX call is valid (checks nonce and current_user_can).
 		Helpers::verify_ajax_call();
@@ -227,37 +226,63 @@ class MybookingTemplatesImport {
 			$this->log_file_path = Helpers::get_log_path();
 
 			// Get selected file index or set it to 0.
-			$this->selected_index = array_key_exists('selected', $_POST) ? absint(sanitize_text_field( filter_input( INPUT_POST, 'selected', FILTER_VALIDATE_INT ) ) ) : 0;
+			$this->selected_index = empty( $_POST['selected'] ) ? 0 : absint( $_POST['selected'] );
 
 			/**
 			 * 1). Prepare import files.
-			 * Predefined import files via filter: mybooking-templates-importer/import_files
+			 * Manually uploaded import files or predefined import files via filter: pt-ocdi/import_files
 			 */
-			if ( ! empty( $this->import_files[ $this->selected_index ] ) ) { // Use predefined import files from wp filter: mybooking-templates-importer/import_files.
+			if ( ! empty( $_FILES ) ) { // Using manual file uploads?
+				// Get paths for the uploaded files.
+				$this->selected_import_files = Helpers::process_uploaded_files( $_FILES, $this->log_file_path );
 
-				// Prepare the import files (content, widgets and customizer files).
-				$this->selected_import_files = Helpers::prepare_import_files( $this->import_files[ $this->selected_index ] );
+				// Set the name of the import files, because we used the uploaded files.
+				$this->import_files[ $this->selected_index ]['import_file_name'] = esc_html__( 'Manually uploaded files', 'pt-ocdi' );
+			}
+			elseif ( ! empty( $this->import_files[ $this->selected_index ] ) ) { // Use predefined import files from wp filter: pt-ocdi/import_files.
 
+				// Download the import files (content, widgets and customizer files).
+				$this->selected_import_files = Helpers::download_import_files( $this->import_files[ $this->selected_index ] );
+
+				// Check Errors.
+				if ( is_wp_error( $this->selected_import_files ) ) {
+					// Write error to log file and send an AJAX response with the error.
+					Helpers::log_error_and_send_ajax_response(
+						$this->selected_import_files->get_error_message(),
+						$this->log_file_path,
+						esc_html__( 'Downloaded files', 'pt-ocdi' )
+					);
+				}
+
+				// Add this message to log file.
+				$log_added = Helpers::append_to_file(
+					sprintf(
+						__( 'The import files for: %s were successfully downloaded!', 'pt-ocdi' ),
+						$this->import_files[ $this->selected_index ]['import_file_name']
+					) . Helpers::import_file_info( $this->selected_import_files ),
+					$this->log_file_path,
+					esc_html__( 'Downloaded files' , 'pt-ocdi' )
+				);
 			}
 			else {
 				// Send JSON Error response to the AJAX call.
-				wp_send_json( esc_html__( 'No import files specified!', 'mybooking-templates-importer' ) );
+				wp_send_json( esc_html__( 'No import files specified!', 'pt-ocdi' ) );
 			}
 		}
 
 		// Save the initial import data as a transient, so other import parts (in new AJAX calls) can use that data.
-		Helpers::set_mybookingTemplatesImporter_import_data_transient( $this->get_current_importer_data() );
+		Helpers::set_ocdi_import_data_transient( $this->get_current_importer_data() );
 
 		if ( ! $this->before_import_executed ) {
 			$this->before_import_executed = true;
 
 			/**
-			 * 2). Execute the actions hooked to the 'mybooking-templates-importer/before_content_import_execution' action:
+			 * 2). Execute the actions hooked to the 'pt-ocdi/before_content_import_execution' action:
 			 *
 			 * Default actions:
 			 * 1 - Before content import WP action (with priority 10).
 			 */
-			do_action( 'mybooking-templates-importer/before_content_import_execution', $this->selected_import_files, $this->import_files, $this->selected_index );
+			do_action( 'pt-ocdi/before_content_import_execution', $this->selected_import_files, $this->import_files, $this->selected_index );
 		}
 
 		/**
@@ -269,17 +294,17 @@ class MybookingTemplatesImport {
 		}
 
 		/**
-		 * 4). Execute the actions hooked to the 'mybooking-templates-importer/after_content_import_execution' action:
+		 * 4). Execute the actions hooked to the 'pt-ocdi/after_content_import_execution' action:
 		 *
 		 * Default actions:
 		 * 1 - Before widgets import setup (with priority 10).
 		 * 2 - Import widgets (with priority 20).
 		 * 3 - Import Redux data (with priority 30).
 		 */
-		do_action( 'mybooking-templates-importer/after_content_import_execution', $this->selected_import_files, $this->import_files, $this->selected_index );
+		do_action( 'pt-ocdi/after_content_import_execution', $this->selected_import_files, $this->import_files, $this->selected_index );
 
 		// Save the import data as a transient, so other import parts (in new AJAX calls) can use that data.
-		Helpers::set_mybookingTemplatesImporter_import_data_transient( $this->get_current_importer_data() );
+		Helpers::set_ocdi_import_data_transient( $this->get_current_importer_data() );
 
 		// Request the customizer import AJAX call.
 		if ( ! empty( $this->selected_import_files['customizer'] ) ) {
@@ -287,7 +312,7 @@ class MybookingTemplatesImport {
 		}
 
 		// Request the after all import AJAX call.
-		if ( false !== has_action( 'mybooking-templates-importer/after_all_import_execution' ) ) {
+		if ( false !== has_action( 'pt-ocdi/after_all_import_execution' ) ) {
 			wp_send_json( array( 'status' => 'afterAllImportAJAX' ) );
 		}
 
@@ -314,11 +339,11 @@ class MybookingTemplatesImport {
 			 * Default actions:
 			 * 1 - Customizer import (with priority 10).
 			 */
-			do_action( 'mybooking-templates-importer/customizer_import_execution', $this->selected_import_files );
+			do_action( 'pt-ocdi/customizer_import_execution', $this->selected_import_files );
 		}
 
 		// Request the after all import AJAX call.
-		if ( false !== has_action( 'mybooking-templates-importer/after_all_import_execution' ) ) {
+		if ( false !== has_action( 'pt-ocdi/after_all_import_execution' ) ) {
 			wp_send_json( array( 'status' => 'afterAllImportAJAX' ) );
 		}
 
@@ -342,7 +367,7 @@ class MybookingTemplatesImport {
 			 * Default actions:
 			 * 1 - after_import action (with priority 10).
 			 */
-			do_action( 'mybooking-templates-importer/after_all_import_execution', $this->selected_import_files, $this->import_files, $this->selected_index );
+			do_action( 'pt-ocdi/after_all_import_execution', $this->selected_import_files, $this->import_files, $this->selected_index );
 		}
 
 		// Send a JSON response with final report.
@@ -355,14 +380,30 @@ class MybookingTemplatesImport {
 	 */
 	private function final_response() {
 		// Delete importer data transient for current import.
-		delete_transient( 'mybookingTemplatesImporter_importer_data' );
+		delete_transient( 'ocdi_importer_data' );
 
 		// Display final messages (success or error messages).
 		if ( empty( $this->frontend_error_messages ) ) {
 			$response['message'] = '';
 
+			// if ( ! apply_filters( 'pt-ocdi/disable_pt_branding', false ) ) {
+			// 	$twitter_status = esc_html__( 'Just used One Click Demo Import plugin and it was awesome! Thanks @ProteusThemes! #OCDI https://www.proteusthemes.com/', 'pt-ocdi' );
+			//
+			// 	$response['message'] .= sprintf(
+			// 		__( '%1$s%6$sWasn\'t this a great One Click Demo Import experience?%7$s Created and maintained by %3$sProteusThemes%4$s. %2$s%5$sClick to Tweet!%4$s%8$s', 'pt-ocdi' ),
+			// 		'<div class="notice  notice-info"><p>',
+			// 		'<br>',
+			// 		'<strong><a href="https://www.proteusthemes.com/" target="_blank">',
+			// 		'</a></strong>',
+			// 		'<strong><a href="' . add_query_arg( 'status', urlencode( $twitter_status ), 'http://twitter.com/home' ) . '" target="_blank">',
+			// 		'<strong>',
+			// 		'</strong>',
+			// 		'</p></div>'
+			// 	);
+			// }
+
 			$response['message'] .= sprintf(
-				__( '%1$s%3$sThat\'s it, all done!%4$s%2$sThe demo import has finished. Please check your page and make sure that everything has imported correctly. If it did, you can deactivate the %3$sMyBooking Templates Importer%4$s plugin, because it has done its job.%5$s', 'mybooking-templates-importer' ),
+				__( '%1$s%3$sThat\'s it, all done!%4$s%2$sThe demo import has finished. Please check your page and make sure that everything has imported correctly. If it did, you can deactivate the %3$sOne Click Demo Import%4$s plugin, because it has done its job.%5$s', 'pt-ocdi' ),
 				'<div class="notice  notice-success"><p>',
 				'<br>',
 				'<strong>',
@@ -373,7 +414,7 @@ class MybookingTemplatesImport {
 		else {
 			$response['message'] = $this->frontend_error_messages_display() . '<br>';
 			$response['message'] .= sprintf(
-				__( '%1$sThe demo import has finished, but there were some import errors.%2$sMore details about the errors can be found in this %3$s%5$slog file%6$s%4$s%7$s', 'mybooking-templates-importer' ),
+				__( '%1$sThe demo import has finished, but there were some import errors.%2$sMore details about the errors can be found in this %3$s%5$slog file%6$s%4$s%7$s', 'pt-ocdi' ),
 				'<div class="notice  notice-warning"><p>',
 				'<br>',
 				'<strong>',
@@ -394,7 +435,7 @@ class MybookingTemplatesImport {
 	 * @return boolean
 	 */
 	private function use_existing_importer_data() {
-		if ( $data = get_transient( 'mybookingTemplatesImporter_importer_data' ) ) {
+		if ( $data = get_transient( 'ocdi_importer_data' ) ) {
 			$this->frontend_error_messages = empty( $data['frontend_error_messages'] ) ? array() : $data['frontend_error_messages'];
 			$this->log_file_path           = empty( $data['log_file_path'] ) ? '' : $data['log_file_path'];
 			$this->selected_index          = empty( $data['selected_index'] ) ? 0 : $data['selected_index'];
@@ -480,7 +521,7 @@ class MybookingTemplatesImport {
 	 * Load the plugin textdomain, so that translations can be made.
 	 */
 	public function load_textdomain() {
-		load_plugin_textdomain( 'mybooking-templates-importer', false, plugin_basename( dirname( dirname( __FILE__ ) ) ) . '/languages' );
+		load_plugin_textdomain( 'pt-ocdi', false, plugin_basename( dirname( dirname( __FILE__ ) ) ) . '/languages' );
 	}
 
 
@@ -493,22 +534,22 @@ class MybookingTemplatesImport {
 		}
 
 		// Get info of import data files and filter it.
-		$this->import_files = Helpers::validate_import_file_info( apply_filters( 'mybooking-templates-importer/import_files', array() ) );
+		$this->import_files = Helpers::validate_import_file_info( apply_filters( 'pt-ocdi/import_files', array() ) );
 
 		/**
 		 * Register all default actions (before content import, widget, customizer import and other actions)
-		 * to the 'before_content_import_execution' and the 'mybooking-templates-importer/after_content_import_execution' action hook.
+		 * to the 'before_content_import_execution' and the 'pt-ocdi/after_content_import_execution' action hook.
 		 */
 		$import_actions = new ImportActions();
 		$import_actions->register_hooks();
 
 		// Importer options array.
-		$importer_options = apply_filters( 'mybooking-templates-importer/importer_options', array(
+		$importer_options = apply_filters( 'pt-ocdi/importer_options', array(
 			'fetch_attachments' => true,
 		) );
 
 		// Logger options for the logger used in the importer.
-		$logger_options = apply_filters( 'mybooking-templates-importer/logger_options', array(
+		$logger_options = apply_filters( 'pt-ocdi/logger_options', array(
 			'logger_min_level' => 'warning',
 		) );
 

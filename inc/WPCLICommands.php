@@ -1,42 +1,42 @@
 <?php
 /**
- * The class for WP-CLI commands for MyBooking Templates Importer plugin.
+ * The class for WP-CLI commands for One Click Demo Import plugin.
  *
- * @package mybooking-templates-importer
+ * @package ocdi
  */
 
-namespace MybookingTemplatesImporter;
+namespace OCDI;
 
 use WP_CLI;
 
 class WPCLICommands extends \WP_CLI_Command {
 
 	/**
-	 * @var object Main MybookingTemplatesImporter class object.
+	 * @var object Main OCDI class object.
 	 */
-	private $mybookingTemplatesImporter;
+	private $ocdi;
 
 	public function __construct() {
 		parent::__construct();
 
-		$this->mybookingTemplatesImporter = MybookingTemplatesImport::get_instance();
+		$this->ocdi = OneClickDemoImport::get_instance();
 
 		Helpers::set_demo_import_start_time();
 
-		$this->mybookingTemplatesImporter->log_file_path = Helpers::get_log_path();
+		$this->ocdi->log_file_path = Helpers::get_log_path();
 	}
 
 	/**
 	 * List all predefined demo imports.
 	 */
 	public function list_predefined() {
-		if ( empty( $this->mybookingTemplatesImporter->import_files ) ) {
-			WP_CLI::error( esc_html__( 'There are no predefined demo imports for currently active theme!', 'mybooking-templates-importer' ) );
+		if ( empty( $this->ocdi->import_files ) ) {
+			WP_CLI::error( esc_html__( 'There are no predefined demo imports for currently active theme!', 'pt-ocdi' ) );
 		}
 
-		WP_CLI::success( esc_html__( 'Here are the predefined demo imports:', 'mybooking-templates-importer' ) );
+		WP_CLI::success( esc_html__( 'Here are the predefined demo imports:', 'pt-ocdi' ) );
 
-		foreach ( $this->mybookingTemplatesImporter->import_files as $index => $import_file ) {
+		foreach ( $this->ocdi->import_files as $index => $import_file ) {
 			WP_CLI::log( sprintf(
 				'%d -> %s [content: %s, widgets: %s, customizer: %s, redux: %s]',
 				$index,
@@ -50,7 +50,7 @@ class WPCLICommands extends \WP_CLI_Command {
 	}
 
 	/**
-	 * Import content/widgets/customizer settings with the MybookingTemplatesImporter plugin.
+	 * Import content/widgets/customizer settings with the OCDI plugin.
 	 *
 	 * ## OPTIONS
 	 *
@@ -68,7 +68,7 @@ class WPCLICommands extends \WP_CLI_Command {
 	 */
 	public function import( $args, $assoc_args ) {
 		if ( ! $this->any_import_options_set( $assoc_args ) ) {
-			WP_CLI::error( esc_html__( 'At least one of the possible options should be set! Check them with --help', 'mybooking-templates-importer' ) );
+			WP_CLI::error( esc_html__( 'At least one of the possible options should be set! Check them with --help', 'pt-ocdi' ) );
 		}
 
 		if ( isset( $assoc_args['predefined'] ) ) {
@@ -113,53 +113,53 @@ class WPCLICommands extends \WP_CLI_Command {
 	}
 
 	/**
-	 * Import the predefined demo content/widgets/customizer settings with MybookingTemplatesImporter.
+	 * Import the predefined demo content/widgets/customizer settings with OCDI.
 	 *
-	 * @param int $predefined_index Index of a MybookingTemplatesImporter predefined demo import.
+	 * @param int $predefined_index Index of a OCDI predefined demo import.
 	 */
 	private function import_predefined( $predefined_index ) {
 		if ( ! is_numeric( $predefined_index ) ) {
-			WP_CLI::error( esc_html__( 'The "predefined" parameter should be a number (an index of the MybookingTemplatesImporter predefined demo import)!', 'mybooking-templates-importer' ) );
+			WP_CLI::error( esc_html__( 'The "predefined" parameter should be a number (an index of the OCDI predefined demo import)!', 'pt-ocdi' ) );
 		}
 
 		$predefined_index = absint( $predefined_index );
 
-		if ( ! array_key_exists( $predefined_index, $this->mybookingTemplatesImporter->import_files ) ) {
-			WP_CLI::warning( esc_html__( 'The supplied predefined index does not exist! Please take a look at the available predefined demo imports:', 'mybooking-templates-importer' ) );
+		if ( ! array_key_exists( $predefined_index, $this->ocdi->import_files ) ) {
+			WP_CLI::warning( esc_html__( 'The supplied predefined index does not exist! Please take a look at the available predefined demo imports:', 'pt-ocdi' ) );
 
 			$this->list_predefined();
 
 			return false;
 		}
 
-		WP_CLI::log( esc_html__( 'Predefined demo import started! All other parameters will be ignored!', 'mybooking-templates-importer' ) );
+		WP_CLI::log( esc_html__( 'Predefined demo import started! All other parameters will be ignored!', 'pt-ocdi' ) );
 
-		$selected_files = $this->mybookingTemplatesImporter->import_files[ $predefined_index ];
+		$selected_files = $this->ocdi->import_files[ $predefined_index ];
 
 		if ( ! empty( $selected_files['import_file_name'] ) ) {
-			WP_CLI::log( sprintf( esc_html__( 'Selected predefined demo import: %s', 'mybooking-templates-importer' ), $selected_files['import_file_name'] ) );
+			WP_CLI::log( sprintf( esc_html__( 'Selected predefined demo import: %s', 'pt-ocdi' ), $selected_files['import_file_name'] ) );
 		}
 
-		WP_CLI::log( esc_html__( 'Preparing the demo import files...', 'mybooking-templates-importer' ) );
+		WP_CLI::log( esc_html__( 'Preparing the demo import files...', 'pt-ocdi' ) );
 
-		$import_files =	Helpers::prepare_import_files( $selected_files );
+		$import_files =	Helpers::download_import_files( $selected_files );
 
 		if ( empty( $import_files ) ) {
-			WP_CLI::error( esc_html__( 'Demo import files could not be retrieved!', 'mybooking-templates-importer' ) );
+			WP_CLI::error( esc_html__( 'Demo import files could not be retrieved!', 'pt-ocdi' ) );
 		}
 
-		WP_CLI::log( esc_html__( 'Demo import files retrieved successfully!', 'mybooking-templates-importer' ) );
+		WP_CLI::log( esc_html__( 'Demo import files retrieved successfully!', 'pt-ocdi' ) );
 
-		WP_CLI::log( esc_html__( 'Importing...', 'mybooking-templates-importer' ) );
+		WP_CLI::log( esc_html__( 'Importing...', 'pt-ocdi' ) );
 
 		if ( ! empty( $import_files['content'] ) ) {
-			$this->do_action( 'mybooking-templates-importer/before_content_import_execution', $import_files, $this->mybookingTemplatesImporter->import_files, $predefined_index );
+			$this->do_action( 'pt-ocdi/before_content_import_execution', $import_files, $this->ocdi->import_files, $predefined_index );
 
 			$this->import_content( $import_files['content'] );
 		}
 
 		if ( ! empty( $import_files['widgets'] ) ) {
-			$this->do_action( 'mybooking-templates-importer/before_widgets_import', $import_files );
+			$this->do_action( 'pt-ocdi/before_widgets_import', $import_files );
 
 			$this->import_widgets( $import_files['widgets'] );
 		}
@@ -168,13 +168,13 @@ class WPCLICommands extends \WP_CLI_Command {
 			$this->import_customizer( $import_files['customizer'] );
 		}
 
-		$this->do_action( 'mybooking-templates-importer/after_all_import_execution', $import_files, $this->mybookingTemplatesImporter->import_files, $predefined_index );
+		$this->do_action( 'pt-ocdi/after_all_import_execution', $import_files, $this->ocdi->import_files, $predefined_index );
 
-		WP_CLI::log( esc_html__( 'Predefined import finished!', 'mybooking-templates-importer' ) );
+		WP_CLI::log( esc_html__( 'Predefined import finished!', 'pt-ocdi' ) );
 	}
 
 	/**
-	 * Import the content with MybookingTemplatesImporter.
+	 * Import the content with OCDI.
 	 *
 	 * @param string $relative_file_path Relative file path to the content import file.
 	 */
@@ -182,37 +182,37 @@ class WPCLICommands extends \WP_CLI_Command {
 		$content_import_file_path = realpath( $relative_file_path );
 
 		if ( ! file_exists( $content_import_file_path ) ) {
-			WP_CLI::warning( esc_html__( 'Content import file provided does not exist! Skipping this import!', 'mybooking-templates-importer' ) );
+			WP_CLI::warning( esc_html__( 'Content import file provided does not exist! Skipping this import!', 'pt-ocdi' ) );
 			return false;
 		}
 
 		// Change the single AJAX call duration so the whole content import will be done in one go.
-		add_filter( 'mybooking-templates-importer/time_for_one_ajax_call', function() {
+		add_filter( 'pt-ocdi/time_for_one_ajax_call', function() {
 			return 3600;
 		} );
 
-		WP_CLI::log( esc_html__( 'Importing content (this might take a while)...', 'mybooking-templates-importer' ) );
+		WP_CLI::log( esc_html__( 'Importing content (this might take a while)...', 'pt-ocdi' ) );
 
-		Helpers::append_to_file( '', $this->mybookingTemplatesImporter->log_file_path, esc_html__( 'Importing content' , 'mybooking-templates-importer' ) );
+		Helpers::append_to_file( '', $this->ocdi->log_file_path, esc_html__( 'Importing content' , 'pt-ocdi' ) );
 
-		$this->mybookingTemplatesImporter->append_to_frontend_error_messages( $this->mybookingTemplatesImporter->importer->import_content( $content_import_file_path ) );
+		$this->ocdi->append_to_frontend_error_messages( $this->ocdi->importer->import_content( $content_import_file_path ) );
 
-		if( empty( $this->mybookingTemplatesImporter->frontend_error_messages ) ) {
-			WP_CLI::success( esc_html__( 'Content import finished!', 'mybooking-templates-importer' ) );
+		if( empty( $this->ocdi->frontend_error_messages ) ) {
+			WP_CLI::success( esc_html__( 'Content import finished!', 'pt-ocdi' ) );
 		}
 		else {
-			WP_CLI::warning( esc_html__( 'There were some issues while importing the content!', 'mybooking-templates-importer' ) );
+			WP_CLI::warning( esc_html__( 'There were some issues while importing the content!', 'pt-ocdi' ) );
 
-			foreach ( $this->mybookingTemplatesImporter->frontend_error_messages as $line ) {
+			foreach ( $this->ocdi->frontend_error_messages as $line ) {
 				WP_CLI::log( $line );
 			}
 
-			$this->mybookingTemplatesImporter->frontend_error_messages = array();
+			$this->ocdi->frontend_error_messages = array();
 		}
 	}
 
 	/**
-	 * Import the widgets with MybookingTemplatesImporter.
+	 * Import the widgets with OCDI.
 	 *
 	 * @param string $relative_file_path Relative file path to the widgets import file.
 	 */
@@ -220,30 +220,30 @@ class WPCLICommands extends \WP_CLI_Command {
 		$widgets_import_file_path = realpath( $relative_file_path );
 
 		if ( ! file_exists( $widgets_import_file_path ) ) {
-			WP_CLI::warning( esc_html__( 'Widgets import file provided does not exist! Skipping this import!', 'mybooking-templates-importer' ) );
+			WP_CLI::warning( esc_html__( 'Widgets import file provided does not exist! Skipping this import!', 'pt-ocdi' ) );
 			return false;
 		}
 
-		WP_CLI::log( esc_html__( 'Importing widgets...', 'mybooking-templates-importer' ) );
+		WP_CLI::log( esc_html__( 'Importing widgets...', 'pt-ocdi' ) );
 
 		WidgetImporter::import( $widgets_import_file_path );
 
-		if( empty( $this->mybookingTemplatesImporter->frontend_error_messages ) ) {
-			WP_CLI::success( esc_html__( 'Widgets imported successfully!', 'mybooking-templates-importer' ) );
+		if( empty( $this->ocdi->frontend_error_messages ) ) {
+			WP_CLI::success( esc_html__( 'Widgets imported successfully!', 'pt-ocdi' ) );
 		}
 		else {
-			WP_CLI::warning( esc_html__( 'There were some issues while importing widgets!', 'mybooking-templates-importer' ) );
+			WP_CLI::warning( esc_html__( 'There were some issues while importing widgets!', 'pt-ocdi' ) );
 
-			foreach ( $this->mybookingTemplatesImporter->frontend_error_messages as $line ) {
+			foreach ( $this->ocdi->frontend_error_messages as $line ) {
 				WP_CLI::log( $line );
 			}
 
-			$this->mybookingTemplatesImporter->frontend_error_messages = array();
+			$this->ocdi->frontend_error_messages = array();
 		}
 	}
 
 	/**
-	 * Import the customizer settings with MybookingTemplatesImporter.
+	 * Import the customizer settings with OCDI.
 	 *
 	 * @param string $relative_file_path Relative file path to the customizer import file.
 	 */
@@ -251,25 +251,25 @@ class WPCLICommands extends \WP_CLI_Command {
 		$customizer_import_file_path = realpath( $relative_file_path );
 
 		if ( ! file_exists( $customizer_import_file_path ) ) {
-			WP_CLI::warning( esc_html__( 'Customizer import file provided does not exist! Skipping this import!', 'mybooking-templates-importer' ) );
+			WP_CLI::warning( esc_html__( 'Customizer import file provided does not exist! Skipping this import!', 'pt-ocdi' ) );
 			return false;
 		}
 
-		WP_CLI::log( esc_html__( 'Importing customizer settings...', 'mybooking-templates-importer' ) );
+		WP_CLI::log( esc_html__( 'Importing customizer settings...', 'pt-ocdi' ) );
 
 		CustomizerImporter::import( $customizer_import_file_path );
 
-		if( empty( $this->mybookingTemplatesImporter->frontend_error_messages ) ) {
-			WP_CLI::success( esc_html__( 'Customizer settings imported successfully!', 'mybooking-templates-importer' ) );
+		if( empty( $this->ocdi->frontend_error_messages ) ) {
+			WP_CLI::success( esc_html__( 'Customizer settings imported successfully!', 'pt-ocdi' ) );
 		}
 		else {
-			WP_CLI::warning( esc_html__( 'There were some issues while importing customizer settings!', 'mybooking-templates-importer' ) );
+			WP_CLI::warning( esc_html__( 'There were some issues while importing customizer settings!', 'pt-ocdi' ) );
 
-			foreach ( $this->mybookingTemplatesImporter->frontend_error_messages as $line ) {
+			foreach ( $this->ocdi->frontend_error_messages as $line ) {
 				WP_CLI::log( $line );
 			}
 
-			$this->mybookingTemplatesImporter->frontend_error_messages = array();
+			$this->ocdi->frontend_error_messages = array();
 		}
 	}
 
@@ -283,13 +283,13 @@ class WPCLICommands extends \WP_CLI_Command {
 	 */
 	private function do_action( $action, $import_files = array(), $all_import_files = array(), $selected_index = null ) {
 		if ( false !== has_action( $action ) ) {
-			WP_CLI::log( sprintf( esc_html__( 'Executing action: %s ...', 'mybooking-templates-importer' ), $action ) );
+			WP_CLI::log( sprintf( esc_html__( 'Executing action: %s ...', 'pt-ocdi' ), $action ) );
 
 			ob_start();
 				do_action( $action, $import_files, $all_import_files, $selected_index );
 			$message = ob_get_clean();
 
-			Helpers::append_to_file( $message, $this->mybookingTemplatesImporter->log_file_path, $action );
+			Helpers::append_to_file( $message, $this->ocdi->log_file_path, $action );
 		}
 	}
 }

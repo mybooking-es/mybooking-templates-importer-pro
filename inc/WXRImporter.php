@@ -1,13 +1,13 @@
 <?php
 /**
- * WXR importer class used in the One Click Demo Import plugin.
+ * WXR importer class used in the MyBooking Templates Importer plugin.
  * Needed to extend the WXR_Importer class to get/set the importer protected variables,
  * for use in the multiple AJAX calls.
  *
- * @package ocdi
+ * @package mybooking-templates-importer
  */
 
-namespace OCDI;
+namespace MybookingTemplatesImporter;
 
 class WXRImporter extends \AwesomeMotive\WPContentImporter2\WXRImporter {
 	/**

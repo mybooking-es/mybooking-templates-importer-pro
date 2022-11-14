@@ -39,7 +39,7 @@
                 "homepage": "https://github.com/humanmade/WordPress-Importer/graphs/contributors"
             }
         ],
-        "description": "Improved WP content importer used in OCDI plugin.",
+        "description": "Improved WP content importer used in MybookingTemplatesImporter plugin.",
         "keywords": [
             "awesomemotive",
             "content",

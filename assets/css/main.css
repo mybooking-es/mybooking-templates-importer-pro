@@ -1,19 +1,19 @@
 /* Overriding WordPress native styles */
 
-.ocdi {
+.mybooking-templates-importer {
 	max-width: none;
 }
 
-.ocdi h2 {
+.mybooking-templates-importer h2 {
 	text-align: inherit;
 }
 
-.ocdi h2:first-child,
-.ocdi h3:first-child {
+.mybooking-templates-importer h2:first-child,
+.mybooking-templates-importer h3:first-child {
 	margin-top: 0;
 }
 
-.ocdi hr {
+.mybooking-templates-importer hr {
 	margin: 2.62em 0;
 }
 
@@ -27,23 +27,23 @@
 	line-height: inherit;
 }
 
-.ocdi .notice {
+.mybooking-templates-importer .notice {
 	display: block !important;
 }
 
 /* Plugin elements */
 
-.ocdi__demo-import-files {
+.mybookingTemplatesImporter__demo-import-files {
 	width: 100%;
 }
 
-.ocdi__demo-import-preview-image-message {
+.mybookingTemplatesImporter__demo-import-preview-image-message {
 	font-style: italic;
 }
 
 /* Plugin title */
 
-.ocdi__title:before {
+.mybookingTemplatesImporter__title:before {
 	width: auto;
 	height: auto;
 	font-size: inherit;
@@ -51,64 +51,47 @@
 
 /* Plugin intro text */
 
-.ocdi__intro-text ul {
+.mybookingTemplatesImporter__intro-text ul {
 	padding: 0 4%;
 	list-style-type: square;
 }
 
-/* Plugin switch import mode link*/
-.ocdi__import-mode-switch {
-	float: right;
-}
-
 /* Plugin multi select import and Plugin file upload containers */
 
-.ocdi__file-upload,
-.ocdi__multi-select-import,
-.ocdi__demo-import-notice:not(:empty) {
+.mybookingTemplatesImporter__demo-import-notice:not(:empty) {
 	padding: 4%;
 	margin: 1.62em 0;
 	background-color: #ffffff;
 	border: 1px solid #e5e5e5;
 }
 
-.ocdi__file-upload {
-	margin: 0;
-	margin-bottom: -1px;
-}
 
-.ocdi__file-upload span {
-	font-size: .81em;
-	font-weight: normal;
-	opacity: .66;
-}
-
-.ocdi__demo-import-notice:not(:empty) {
+.mybookingTemplatesImporter__demo-import-notice:not(:empty) {
 	border: 0;
 	border-left: 4px solid #00a0d2;
 	-webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
 	box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
 }
 
-[dir="rtl"] .ocdi__demo-import-notice:not(:empty) {
+[dir="rtl"] .mybookingTemplatesImporter__demo-import-notice:not(:empty) {
 	border: 0;
 	border-right: 4px solid #00a0d2;
 }
 
 /* Plugin button */
 
-.ocdi__button-container {
+.mybookingTemplatesImporter__button-container {
 	margin-top: 1.62em;
 }
 
 /* AJAX loader */
 
-p.ocdi__ajax-loader {
+p.mybookingTemplatesImporter__ajax-loader {
 	font-size: 1.5em;
 	display: none;
 }
 
-.ocdi__ajax-loader .spinner {
+.mybookingTemplatesImporter__ajax-loader .spinner {
 	display: inline-block;
 	float: none;
 	visibility: visible;
@@ -118,12 +101,12 @@ p.ocdi__ajax-loader {
 
 /* New grid layout */
 
-.ocdi__gl-navigation li a {
+.mybookingTemplatesImporter__gl-navigation li a {
 	-webkit-box-shadow: none;
 	box-shadow: none;
 }
 
-.ocdi__gl-item {
+.mybookingTemplatesImporter__gl-item {
 	float: left;
 	width: 100%;
 	margin: 0 0 20px 0;
@@ -136,7 +119,7 @@ p.ocdi__ajax-loader {
 	box-sizing: border-box;
 }
 
-.ocdi__gl-item-image-container {
+.mybookingTemplatesImporter__gl-item-image-container {
 	display: block;
 	overflow: hidden;
 	position: relative;
@@ -145,13 +128,13 @@ p.ocdi__ajax-loader {
 	transition: opacity 0.2s ease-in-out;
 }
 
-.ocdi__gl-item-image-container::after {
+.mybookingTemplatesImporter__gl-item-image-container::after {
 	content: "";
 	display: block;
 	padding-top: 66.66666%;
 }
 
-.ocdi__gl-item-image {
+.mybookingTemplatesImporter__gl-item-image {
 	height: auto;
 	position: absolute;
 	left: 0;
@@ -161,7 +144,7 @@ p.ocdi__ajax-loader {
 	transition: opacity 0.2s ease-in-out;
 }
 
-.ocdi__gl-item-image--no-image {
+.mybookingTemplatesImporter__gl-item-image--no-image {
 	display: inline-block;
 	width: 50%;
 	text-align: center;
@@ -171,7 +154,7 @@ p.ocdi__ajax-loader {
 	left: 25%;
 }
 
-.ocdi__gl-item-footer {
+.mybookingTemplatesImporter__gl-item-footer {
 	height: 30px;
 	margin: 0;
 	padding: 10px;
@@ -181,7 +164,7 @@ p.ocdi__ajax-loader {
 	background: rgba(255,255,255,0.65);
 }
 
-h4.ocdi__gl-item-title {
+h4.mybookingTemplatesImporter__gl-item-title {
 	width: 70%;
 	overflow: hidden;
 	white-space: nowrap;
@@ -190,40 +173,40 @@ h4.ocdi__gl-item-title {
 	margin: 6px 0 0 0;
 }
 
-.ocdi__gl-item-footer--with-preview h4.ocdi__gl-item-title {
+.mybookingTemplatesImporter__gl-item-footer--with-preview h4.mybookingTemplatesImporter__gl-item-title {
 	width: calc(100% - 140px);
 }
 
-.ocdi__gl-item-button {
+.mybookingTemplatesImporter__gl-item-button {
 	float: right;
 }
 
-.ocdi__gl-item-button + .ocdi__gl-item-button {
+.mybookingTemplatesImporter__gl-item-button + .mybookingTemplatesImporter__gl-item-button {
 	margin-right: 5px;
 }
 
 @media (max-width: 782px) {
-	h4.ocdi__gl-item-title,
-	.ocdi__gl-item-footer--with-preview h4.ocdi__gl-item-title {
+	h4.mybookingTemplatesImporter__gl-item-title,
+	.mybookingTemplatesImporter__gl-item-footer--with-preview h4.mybookingTemplatesImporter__gl-item-title {
 		width: 100%;
 		margin-bottom: 10px;
 	}
 
-	.ocdi__gl-item-button {
+	.mybookingTemplatesImporter__gl-item-button {
 		width: calc(50% - 10px);
 		margin-bottom: 10px;
 	}
 
-	.ocdi__gl-item-button + .ocdi__gl-item-button {
+	.mybookingTemplatesImporter__gl-item-button + .mybookingTemplatesImporter__gl-item-button {
 		float: left;
 	}
 
-	.ocdi__gl-item-footer {
+	.mybookingTemplatesImporter__gl-item-footer {
 		height: 72px;
 	}
 }
 
-.ocdi__gl-header {
+.mybookingTemplatesImporter__gl-header {
 	display: inline-block;
 	width: calc(100% - 40px);
 	background-color: #ffffff;
@@ -231,30 +214,30 @@ h4.ocdi__gl-item-title {
 	padding: 0 20px;
 }
 
-.ocdi__gl-navigation {
+.mybookingTemplatesImporter__gl-navigation {
 	font-size: 13px;
 	width: 100%;
 	float: left;
 }
 
-.ocdi__gl-navigation ul {
+.mybookingTemplatesImporter__gl-navigation ul {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
 	overflow: hidden;
 }
 
-.ocdi__gl-navigation li {
+.mybookingTemplatesImporter__gl-navigation li {
 	float: left;
 	margin: 0 15px;
 }
 
-.ocdi__gl-navigation li.active a,
-.ocdi__gl-navigation li.active a:hover {
+.mybookingTemplatesImporter__gl-navigation li.active a,
+.mybookingTemplatesImporter__gl-navigation li.active a:hover {
 	border-bottom: 4px solid #666666;
 }
 
-.ocdi__gl-navigation li a {
+.mybookingTemplatesImporter__gl-navigation li a {
 	display: block;
 	text-align: center;
 	text-decoration: none;
@@ -263,31 +246,31 @@ h4.ocdi__gl-item-title {
 	padding: 15px 0;
 }
 
-.ocdi__gl-navigation li a:hover {
+.mybookingTemplatesImporter__gl-navigation li a:hover {
 	color: #00a0d2;
 	border-bottom: 4px solid #ffffff;
 	cursor:pointer;
 }
 
-.ocdi__gl-search-input {
+.mybookingTemplatesImporter__gl-search-input {
 	width: 100%;
 	margin: 10px 0;
 }
 
 @media (min-width: 640px) {
-	.ocdi__gl-navigation {
+	.mybookingTemplatesImporter__gl-navigation {
 		width: calc(100% - 180px);
 	}
 
-	.ocdi__gl-navigation li {
+	.mybookingTemplatesImporter__gl-navigation li {
 		margin: 0;
 	}
 
-	.ocdi__gl-navigation li a {
+	.mybookingTemplatesImporter__gl-navigation li a {
 		padding: 15px;
 	}
 
-	.ocdi__gl-search-input {
+	.mybookingTemplatesImporter__gl-search-input {
 		display: inline-block;
 		width: 180px;
 		height: 30px;
@@ -295,29 +278,29 @@ h4.ocdi__gl-item-title {
 		margin-top: 11px;
 	}
 
-	.ocdi__gl-item-container {
+	.mybookingTemplatesImporter__gl-item-container {
 		margin-right: -20px;
 	}
 
-	.ocdi__gl-item {
+	.mybookingTemplatesImporter__gl-item {
 		width: calc(50% - 20px);
 		margin: 0 20px 20px 0;
 	}
 }
 
 @media (min-width: 1120px) {
-	.ocdi__gl-item-container {
+	.mybookingTemplatesImporter__gl-item-container {
 		margin-right: -30px;
 	}
 
-	.ocdi__gl-item {
+	.mybookingTemplatesImporter__gl-item {
 		width: calc(33.333% - 30px);
 		margin: 0 30px 30px 0;
 	}
 }
 
 /* Grid animations */
-@keyframes ocdi-fade {
+@keyframes mybooking-templates-importer-fade {
 	from {
 		opacity: 1;
 	}
@@ -327,39 +310,39 @@ h4.ocdi__gl-item-title {
 	}
 }
 
-.ocdi-is-fadeout {
-	animation: ocdi-fade linear 200ms 1 forwards;
+.mybooking-templates-importer-is-fadeout {
+	animation: mybooking-templates-importer-fade linear 200ms 1 forwards;
 }
 
-.ocdi-is-fadein {
-	animation: ocdi-fade linear 200ms 1 reverse forwards;
+.mybooking-templates-importer-is-fadein {
+	animation: mybooking-templates-importer-fade linear 200ms 1 reverse forwards;
 }
 
 /* Grid layout modal window */
 
-.ocdi__modal-image-container {
+.mybookingTemplatesImporter__modal-image-container {
 	width: 100%;
 	height: 180px;
 	margin: 0;
 	overflow: hidden;
 }
 
-.ocdi__modal-item-title {
+.mybookingTemplatesImporter__modal-item-title {
 	margin-top: 0.5em;
 	font-weight: bold;
 }
 
-.ocdi__modal-image-container img {
+.mybookingTemplatesImporter__modal-image-container img {
 	width: 100%;
 }
 
-.ocdi__modal-notice.ocdi__demo-import-notice:not(:empty) {
+.mybookingTemplatesImporter__modal-notice.mybookingTemplatesImporter__demo-import-notice:not(:empty) {
 	border: 1px solid #e5e5e5;
 	border-left: 4px solid #00a0d2;
 	margin: 1em 0 0;
 }
 
 /* Redux */
-.ocdi__redux-option-name-label {
+.mybookingTemplatesImporter__redux-option-name-label {
 	margin-right: 5px;
 }

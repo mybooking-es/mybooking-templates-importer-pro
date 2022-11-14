@@ -1,11 +1,11 @@
 <?php
 /**
- * Class for declaring the content importer used in the One Click Demo Import plugin
+ * Class for declaring the content importer used in the MyBooking Templates Importer plugin
  *
- * @package ocdi
+ * @package mybooking-templates-importer
  */
 
-namespace OCDI;
+namespace MybookingTemplatesImporter;
 
 class Importer {
 	/**
@@ -23,18 +23,18 @@ class Importer {
 	private $microtime;
 
 	/**
-	 * The instance of the OCDI\Logger class.
+	 * The instance of the MybookingTemplatesImporter\Logger class.
 	 *
 	 * @var object
 	 */
 	public $logger;
 
 	/**
-	 * The instance of the One Click Demo Import class.
+	 * The instance of the MyBooking Templates Importer class.
 	 *
 	 * @var object
 	 */
-	private $ocdi;
+	private $mybookingTemplatesImporter;
 
 	/**
 	 * Constructor method.
@@ -56,8 +56,8 @@ class Importer {
 			$this->set_logger( $this->logger );
 		}
 
-		// Get the OCDI (main plugin class) instance.
-		$this->ocdi = OneClickDemoImport::get_instance();
+		// Get the MybookingTemplatesImporter (main plugin class) instance.
+		$this->mybookingTemplatesImporter = MybookingTemplatesImport::get_instance();
 	}
 
 
@@ -119,7 +119,7 @@ class Importer {
 
 		// Increase PHP max execution time. Just in case, even though the AJAX calls are only 25 sec long.
 		if ( strpos( ini_get( 'disable_functions' ), 'set_time_limit' ) === false ) {
-			set_time_limit( apply_filters( 'pt-ocdi/set_time_limit_for_demo_data_import', 300 ) );
+			set_time_limit( apply_filters( 'mybooking-templates-importer/set_time_limit_for_demo_data_import', 300 ) );
 		}
 
 		// Disable import of authors.
@@ -129,7 +129,7 @@ class Importer {
 		add_filter( 'wxr_importer.pre_process.post', array( $this, 'new_ajax_request_maybe' ) );
 
 		// Disables generation of multiple image sizes (thumbnails) in the content import step.
-		if ( ! apply_filters( 'pt-ocdi/regenerate_thumbnails_in_content_import', true ) ) {
+		if ( ! apply_filters( 'mybooking-templates-importer/regenerate_thumbnails_in_content_import', true ) ) {
 			add_filter( 'intermediate_image_sizes_advanced', '__return_null' );
 		}
 
@@ -155,7 +155,7 @@ class Importer {
 		$time = microtime( true ) - $this->microtime;
 
 		// We should make a new ajax call, if the time is right.
-		if ( $time > apply_filters( 'pt-ocdi/time_for_one_ajax_call', 25 ) ) {
+		if ( $time > apply_filters( 'mybooking-templates-importer/time_for_one_ajax_call', 25 ) ) {
 			$response = array(
 				'status'  => 'newAJAX',
 				'message' => 'Time for new AJAX request!: ' . $time,
@@ -164,15 +164,15 @@ class Importer {
 			// Add any output to the log file and clear the buffers.
 			$message = ob_get_clean();
 
-			// Add any error messages to the frontend_error_messages variable in OCDI main class.
+			// Add any error messages to the frontend_error_messages variable in MybookingTemplatesImporter main class.
 			if ( ! empty( $message ) ) {
-				$this->ocdi->append_to_frontend_error_messages( $message );
+				$this->mybookingTemplatesImporter->append_to_frontend_error_messages( $message );
 			}
 
 			// Add message to log file.
 			$log_added = Helpers::append_to_file(
-				__( 'New AJAX call!' , 'pt-ocdi' ) . PHP_EOL . $message,
-				$this->ocdi->get_log_file_path(),
+				__( 'New AJAX call!' , 'mybooking-templates-importer' ) . PHP_EOL . $message,
+				$this->mybookingTemplatesImporter->get_log_file_path(),
 				''
 			);
 
@@ -196,8 +196,8 @@ class Importer {
 	 * Set current state of the content importer, so we can continue the import with new AJAX request.
 	 */
 	private function set_current_importer_data() {
-		$data = array_merge( $this->ocdi->get_current_importer_data(), $this->get_importer_data() );
+		$data = array_merge( $this->mybookingTemplatesImporter->get_current_importer_data(), $this->get_importer_data() );
 
-		Helpers::set_ocdi_import_data_transient( $data );
+		Helpers::set_mybookingTemplatesImporter_import_data_transient( $data );
 	}
 }

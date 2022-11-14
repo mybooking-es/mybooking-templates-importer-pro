@@ -6,10 +6,10 @@
  * Used in the Customizer importer.
  *
  * @since 1.1.1
- * @package ocdi
+ * @package mybooking-templates-importer
  */
 
-namespace OCDI;
+namespace MybookingTemplatesImporter;
 
 final class CustomizerOption extends \WP_Customize_Setting {
 	/**

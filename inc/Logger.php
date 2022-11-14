@@ -1,11 +1,11 @@
 <?php
 /**
- * Logger class used in the One Click Demo Import plugin
+ * Logger class used in the MyBooking Templates Importer plugin
  *
- * @package ocdi
+ * @package mybooking-templates-importer
  */
 
-namespace OCDI;
+namespace MybookingTemplatesImporter;
 
 class Logger extends \AwesomeMotive\WPContentImporter2\WPImporterLoggerCLI {
 	/**

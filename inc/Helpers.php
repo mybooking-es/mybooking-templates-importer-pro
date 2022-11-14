@@ -1,11 +1,11 @@
 <?php
 /**
- * Static functions used in the OCDI plugin.
+ * Static functions used in the MybookingTemplatesImporter plugin.
  *
- * @package ocdi
+ * @package mybooking-templates-importer
  */
 
-namespace OCDI;
+namespace MybookingTemplatesImporter;
 
 /**
  * Class with static helper functions.
@@ -58,72 +58,32 @@ class Helpers {
 	 * @param  array  $import_file_info array with import file details.
 	 * @return array|WP_Error array of paths to the downloaded files or WP_Error object with error message.
 	 */
-	public static function download_import_files( $import_file_info ) {
+	public static function prepare_import_files( $import_file_info ) {
 		$downloaded_files = array(
 			'content'    => '',
 			'widgets'    => '',
 			'customizer' => '',
 			'redux'      => '',
 		);
-		$downloader = new Downloader();
 
-		$import_file_info = apply_filters('pt-ocdi/pre_download_import_files', $import_file_info);
+		$import_file_info = apply_filters('mybooking-templates-importer/pre_prepare_import_files', $import_file_info);
 
 		// ----- Set content file path -----
-		// Check if 'import_file_url' is not defined. That would mean a local file.
-		if ( empty( $import_file_info['import_file_url'] ) ) {
+		if ( ! empty( $import_file_info['local_import_file'] ) ) {
 			if ( file_exists( $import_file_info['local_import_file'] ) ) {
-				$downloaded_files['content'] = $import_file_info['local_import_file'];
-			}
-		}
-		else {
-			// Set the filename string for content import file.
-			$content_filename = apply_filters( 'pt-ocdi/downloaded_content_file_prefix', 'demo-content-import-file_' ) . self::$demo_import_start_time . apply_filters( 'pt-ocdi/downloaded_content_file_suffix_and_file_extension', '.xml' );
-
-			// Download the content import file.
-			$downloaded_files['content'] = $downloader->download_file( $import_file_info['import_file_url'], $content_filename );
-
-			// Return from this function if there was an error.
-			if ( is_wp_error( $downloaded_files['content'] ) ) {
-				return $downloaded_files['content'];
+	  		  $downloaded_files['content'] = $import_file_info['local_import_file'];
 			}
 		}
 
 		// ----- Set widget file path -----
-		// Get widgets file as well. If defined!
-		if ( ! empty( $import_file_info['import_widget_file_url'] ) ) {
-			// Set the filename string for widgets import file.
-			$widget_filename = apply_filters( 'pt-ocdi/downloaded_widgets_file_prefix', 'demo-widgets-import-file_' ) . self::$demo_import_start_time . apply_filters( 'pt-ocdi/downloaded_widgets_file_suffix_and_file_extension', '.json' );
-
-			// Download the widgets import file.
-			$downloaded_files['widgets'] = $downloader->download_file( $import_file_info['import_widget_file_url'], $widget_filename );
-
-			// Return from this function if there was an error.
-			if ( is_wp_error( $downloaded_files['widgets'] ) ) {
-				return $downloaded_files['widgets'];
-			}
-		}
-		else if ( ! empty( $import_file_info['local_import_widget_file'] ) ) {
+		if ( ! empty( $import_file_info['local_import_widget_file'] ) ) {		
 			if ( file_exists( $import_file_info['local_import_widget_file'] ) ) {
 				$downloaded_files['widgets'] = $import_file_info['local_import_widget_file'];
 			}
 		}
 
 		// ----- Set customizer file path -----
-		// Get customizer import file as well. If defined!
-		if ( ! empty( $import_file_info['import_customizer_file_url'] ) ) {
-			// Setup filename path to save the customizer content.
-			$customizer_filename = apply_filters( 'pt-ocdi/downloaded_customizer_file_prefix', 'demo-customizer-import-file_' ) . self::$demo_import_start_time . apply_filters( 'pt-ocdi/downloaded_customizer_file_suffix_and_file_extension', '.dat' );
-
-			// Download the customizer import file.
-			$downloaded_files['customizer'] = $downloader->download_file( $import_file_info['import_customizer_file_url'], $customizer_filename );
-
-			// Return from this function if there was an error.
-			if ( is_wp_error( $downloaded_files['customizer'] ) ) {
-				return $downloaded_files['customizer'];
-			}
-		}
-		else if ( ! empty( $import_file_info['local_import_customizer_file'] ) ) {
+		if ( ! empty( $import_file_info['local_import_customizer_file'] ) ) {	
 			if ( file_exists( $import_file_info['local_import_customizer_file'] ) ) {
 				$downloaded_files['customizer'] = $import_file_info['local_import_customizer_file'];
 			}
@@ -131,31 +91,7 @@ class Helpers {
 
 		// ----- Set Redux file paths -----
 		// Get Redux import file as well. If defined!
-		if ( ! empty( $import_file_info['import_redux'] ) && is_array( $import_file_info['import_redux'] ) ) {
-			$redux_items = array();
-
-			// Setup filename paths to save the Redux content.
-			foreach ( $import_file_info['import_redux'] as $index => $redux_item ) {
-				$redux_filename = apply_filters( 'pt-ocdi/downloaded_redux_file_prefix', 'demo-redux-import-file_' ) . $index . '-' . self::$demo_import_start_time . apply_filters( 'pt-ocdi/downloaded_redux_file_suffix_and_file_extension', '.json' );
-
-				// Download the Redux import file.
-				$file_path = $downloader->download_file( $redux_item['file_url'], $redux_filename );
-
-				// Return from this function if there was an error.
-				if ( is_wp_error( $file_path ) ) {
-					return $file_path;
-				}
-
-				$redux_items[] = array(
-					'option_name' => $redux_item['option_name'],
-					'file_path'   => $file_path,
-				);
-			}
-
-			// Download the Redux import file.
-			$downloaded_files['redux'] = $redux_items;
-		}
-		else if ( ! empty( $import_file_info['local_import_redux'] ) ) {
+		if ( ! empty( $import_file_info['local_import_redux'] ) ) {
 
 			$redux_items = array();
 
@@ -172,41 +108,6 @@ class Helpers {
 
 		return $downloaded_files;
 	}
-
-
-	/**
-	 * Write content to a file.
-	 *
-	 * @param string $content content to be saved to the file.
-	 * @param string $file_path file path where the content should be saved.
-	 * @return string|WP_Error path to the saved file or WP_Error object with error message.
-	 */
-	public static function write_to_file( $content, $file_path ) {
-		// Verify WP file-system credentials.
-		$verified_credentials = self::check_wp_filesystem_credentials();
-
-		if ( is_wp_error( $verified_credentials ) ) {
-			return $verified_credentials;
-		}
-
-		// By this point, the $wp_filesystem global should be working, so let's use it to create a file.
-		global $wp_filesystem;
-
-		if ( ! $wp_filesystem->put_contents( $file_path, $content ) ) {
-			return new \WP_Error(
-				'failed_writing_file_to_server',
-				sprintf(
-					__( 'An error occurred while writing file to your server! Tried to write a file to: %s%s.', 'pt-ocdi' ),
-					'<br>',
-					$file_path
-				)
-			);
-		}
-
-		// Return the file path on successful file write.
-		return $file_path;
-	}
-
 
 	/**
 	 * Append content to the file.
@@ -239,7 +140,7 @@ class Helpers {
 			return new \WP_Error(
 				'failed_writing_file_to_server',
 				sprintf(
-					__( 'An error occurred while writing file to your server! Tried to write a file to: %s%s.', 'pt-ocdi' ),
+					__( 'An error occurred while writing file to your server! Tried to write a file to: %s%s.', 'mybooking-templates-importer' ),
 					'<br>',
 					$file_path
 				)
@@ -273,7 +174,7 @@ class Helpers {
 			return new \WP_Error(
 				'failed_reading_file_from_server',
 				sprintf(
-					__( 'An error occurred while reading a file from your server! Tried reading file from path: %s%s.', 'pt-ocdi' ),
+					__( 'An error occurred while reading a file from your server! Tried reading file from path: %s%s.', 'mybooking-templates-importer' ),
 					'<br>',
 					$file_path
 				)
@@ -296,7 +197,7 @@ class Helpers {
 			return new \WP_Error(
 				'no_direct_file_access',
 				sprintf(
-					__( 'This WordPress page does not have %sdirect%s write file access. This plugin needs it in order to save the demo import xml file to the upload directory of your site. You can change this setting with these instructions: %s.', 'pt-ocdi' ),
+					__( 'This WordPress page does not have %sdirect%s write file access. This plugin needs it in order to save the demo import xml file to the upload directory of your site. You can change this setting with these instructions: %s.', 'mybooking-templates-importer' ),
 					'<strong>',
 					'</strong>',
 					'<a href="http://gregorcapuder.com/wordpress-how-to-set-direct-filesystem-method/" target="_blank">How to set <strong>direct</strong> filesystem method</a>'
@@ -305,12 +206,12 @@ class Helpers {
 		}
 
 		// Get plugin page settings.
-		$plugin_page_setup = apply_filters( 'pt-ocdi/plugin_page_setup', array(
+		$plugin_page_setup = apply_filters( 'mybooking-templates-importer/plugin_page_setup', array(
 				'parent_slug' => 'themes.php',
-				'page_title'  => esc_html__( 'One Click Demo Import' , 'pt-ocdi' ),
-				'menu_title'  => esc_html__( 'Import Demo Data' , 'pt-ocdi' ),
+				'page_title'  => esc_html__( 'MyBooking Templates Importer' , 'mybooking-templates-importer' ),
+				'menu_title'  => esc_html__( 'Import Site Templates' , 'mybooking-templates-importer' ),
 				'capability'  => 'import',
-				'menu_slug'   => 'pt-one-click-demo-import',
+				'menu_slug'   => 'mybooking-templates-import',
 			)
 		);
 
@@ -320,7 +221,7 @@ class Helpers {
 		if ( false === ( $creds = request_filesystem_credentials( $demo_import_page_url, '', false, false, null ) ) ) {
 			return new \WP_error(
 				'filesystem_credentials_could_not_be_retrieved',
-				__( 'An error occurred while retrieving reading/writing permissions to your server (could not retrieve WP filesystem credentials)!', 'pt-ocdi' )
+				__( 'An error occurred while retrieving reading/writing permissions to your server (could not retrieve WP filesystem credentials)!', 'mybooking-templates-importer' )
 			);
 		}
 
@@ -328,7 +229,7 @@ class Helpers {
 		if ( ! WP_Filesystem( $creds ) ) {
 			return new \WP_Error(
 				'wrong_login_credentials',
-				__( 'Your WordPress login credentials don\'t allow to use WP_Filesystem!', 'pt-ocdi' )
+				__( 'Your WordPress login credentials don\'t allow to use WP_Filesystem!', 'mybooking-templates-importer' )
 			);
 		}
 
@@ -343,9 +244,9 @@ class Helpers {
 	 */
 	public static function get_log_path() {
 		$upload_dir  = wp_upload_dir();
-		$upload_path = apply_filters( 'pt-ocdi/upload_file_path', trailingslashit( $upload_dir['path'] ) );
+		$upload_path = apply_filters( 'mybooking-templates-importer/upload_file_path', trailingslashit( $upload_dir['path'] ) );
 
-		$log_path = $upload_path . apply_filters( 'pt-ocdi/log_file_prefix', 'log_file_' ) . self::$demo_import_start_time . apply_filters( 'pt-ocdi/log_file_suffix_and_file_extension', '.txt' );
+		$log_path = $upload_path . apply_filters( 'mybooking-templates-importer/log_file_prefix', 'log_file_' ) . self::$demo_import_start_time . apply_filters( 'mybooking-templates-importer/log_file_suffix_and_file_extension', '.txt' );
 
 		self::register_file_as_media_attachment( $log_path );
 
@@ -362,13 +263,13 @@ class Helpers {
 	public static function register_file_as_media_attachment( $log_path ) {
 		// Check the type of file.
 		$log_mimes = array( 'txt' => 'text/plain' );
-		$filetype  = wp_check_filetype( basename( $log_path ), apply_filters( 'pt-ocdi/file_mimes', $log_mimes ) );
+		$filetype  = wp_check_filetype( basename( $log_path ), apply_filters( 'mybooking-templates-importer/file_mimes', $log_mimes ) );
 
 		// Prepare an array of post data for the attachment.
 		$attachment = array(
 			'guid'           => self::get_log_url( $log_path ),
 			'post_mime_type' => $filetype['type'],
-			'post_title'     => apply_filters( 'pt-ocdi/attachment_prefix', esc_html__( 'One Click Demo Import - ', 'pt-ocdi' ) ) . preg_replace( '/\.[^.]+$/', '', basename( $log_path ) ),
+			'post_title'     => apply_filters( 'mybooking-templates-importer/attachment_prefix', esc_html__( 'MyBooking Templates Importer - ', 'mybooking-templates-importer' ) ) . preg_replace( '/\.[^.]+$/', '', basename( $log_path ) ),
 			'post_content'   => '',
 			'post_status'    => 'inherit',
 		);
@@ -386,7 +287,7 @@ class Helpers {
 	 */
 	public static function get_log_url( $log_path ) {
 		$upload_dir = wp_upload_dir();
-		$upload_url = apply_filters( 'pt-ocdi/upload_file_url', trailingslashit( $upload_dir['url'] ) );
+		$upload_url = apply_filters( 'mybooking-templates-importer/upload_file_url', trailingslashit( $upload_dir['url'] ) );
 
 		return $upload_url . basename( $log_path );
 	}
@@ -396,13 +297,13 @@ class Helpers {
 	 * Check if the AJAX call is valid.
 	 */
 	public static function verify_ajax_call() {
-		check_ajax_referer( 'ocdi-ajax-verification', 'security' );
+		check_ajax_referer( 'mybooking-templates-importer-ajax-verification', 'security' );
 
 		// Check if user has the WP capability to import data.
 		if ( ! current_user_can( 'import' ) ) {
 			wp_die(
 				sprintf(
-					__( '%sYour user role isn\'t high enough. You don\'t have permission to import demo data.%s', 'pt-ocdi' ),
+					__( '%sYour user role isn\'t high enough. You don\'t have permission to import demo data.%s', 'mybooking-templates-importer' ),
 					'<div class="notice  notice-error"><p>',
 					'</p></div>'
 				)
@@ -410,201 +311,11 @@ class Helpers {
 		}
 	}
 
-
-	/**
-	 * Process uploaded files and return the paths to these files.
-	 *
-	 * @param array  $uploaded_files $_FILES array form an AJAX request.
-	 * @param string $log_file_path path to the log file.
-	 * @return array of paths to the content import and widget import files.
-	 */
-	public static function process_uploaded_files( $uploaded_files, $log_file_path ) {
-		// Variable holding the paths to the uploaded files.
-		$selected_import_files = array(
-			'content'    => '',
-			'widgets'    => '',
-			'customizer' => '',
-			'redux'      => '',
-		);
-
-		// Upload settings to disable form and type testing for AJAX uploads.
-		$upload_overrides = array(
-			'test_form' => false,
-			'test_type' => false,
-		);
-
-		// Error data if the demo file was not provided.
-		$file_not_provided_error = array(
-			'error' => esc_html__( 'No file provided.', 'pt-ocdi' )
-		);
-
-		// Handle demo file uploads.
-		$content_file_info = isset( $_FILES['content_file'] ) ?
-			wp_handle_upload( $_FILES['content_file'], $upload_overrides ) :
-			$file_not_provided_error;
-
-		$widget_file_info = isset( $_FILES['widget_file'] ) ?
-			wp_handle_upload( $_FILES['widget_file'], $upload_overrides ) :
-			$file_not_provided_error;
-
-		$customizer_file_info = isset( $_FILES['customizer_file'] ) ?
-			wp_handle_upload( $_FILES['customizer_file'], $upload_overrides ) :
-			$file_not_provided_error;
-
-		$redux_file_info = isset( $_FILES['customizer_file'] ) ?
-			wp_handle_upload( $_FILES['redux_file'], $upload_overrides ) :
-			$file_not_provided_error;
-
-		// Process content import file.
-		if ( $content_file_info && ! isset( $content_file_info['error'] ) ) {
-			// Set uploaded content file.
-			$selected_import_files['content'] = $content_file_info['file'];
-		}
-		else {
-			// Add this error to log file.
-			$log_added = self::append_to_file(
-				sprintf(
-					__( 'Content file was not uploaded. Error: %s', 'pt-ocdi' ),
-					$content_file_info['error']
-				),
-				$log_file_path,
-				esc_html__( 'Upload files' , 'pt-ocdi' )
-			);
-		}
-
-		// Process widget import file.
-		if ( $widget_file_info && ! isset( $widget_file_info['error'] ) ) {
-			// Set uploaded widget file.
-			$selected_import_files['widgets'] = $widget_file_info['file'];
-		}
-		else {
-			// Add this error to log file.
-			$log_added = self::append_to_file(
-				sprintf(
-					__( 'Widget file was not uploaded. Error: %s', 'pt-ocdi' ),
-					$widget_file_info['error']
-				),
-				$log_file_path,
-				esc_html__( 'Upload files' , 'pt-ocdi' )
-			);
-		}
-
-		// Process Customizer import file.
-		if ( $customizer_file_info && ! isset( $customizer_file_info['error'] ) ) {
-			// Set uploaded customizer file.
-			$selected_import_files['customizer'] = $customizer_file_info['file'];
-		}
-		else {
-			// Add this error to log file.
-			$log_added = self::append_to_file(
-				sprintf(
-					__( 'Customizer file was not uploaded. Error: %s', 'pt-ocdi' ),
-					$customizer_file_info['error']
-				),
-				$log_file_path,
-				esc_html__( 'Upload files' , 'pt-ocdi' )
-			);
-		}
-
-		// Process Redux import file.
-		if ( $redux_file_info && ! isset( $redux_file_info['error'] ) ) {
-			if ( isset( $_POST['redux_option_name'] ) && empty( $_POST['redux_option_name'] ) ) {
-				// Write error to log file and send an AJAX response with the error.
-				self::log_error_and_send_ajax_response(
-					esc_html__( 'Missing Redux option name! Please also enter the Redux option name!', 'pt-ocdi' ),
-					$log_file_path,
-					esc_html__( 'Upload files', 'pt-ocdi' )
-				);
-			}
-
-			// Set uploaded Redux file.
-			$selected_import_files['redux'] = array(
-				array(
-					'option_name' => $_POST['redux_option_name'],
-					'file_path'   => $redux_file_info['file'],
-				),
-			);
-		}
-		else {
-			// Add this error to log file.
-			$log_added = self::append_to_file(
-				sprintf(
-					__( 'Redux file was not uploaded. Error: %s', 'pt-ocdi' ),
-					$redux_file_info['error']
-				),
-				$log_file_path,
-				esc_html__( 'Upload files' , 'pt-ocdi' )
-			);
-		}
-
-		// Add this message to log file.
-		$log_added = self::append_to_file(
-			__( 'The import files were successfully uploaded!', 'pt-ocdi' ) . self::import_file_info( $selected_import_files ),
-			$log_file_path,
-			esc_html__( 'Upload files' , 'pt-ocdi' )
-		);
-
-		// Return array with paths of uploaded files.
-		return $selected_import_files;
-	}
-
-
-	/**
-	 * Get import file information and max execution time.
-	 *
-	 * @param array $selected_import_files array of selected import files.
-	 */
-	public static function import_file_info( $selected_import_files ) {
-		$redux_file_string = '';
-
-		if ( ! empty( $selected_import_files['redux'] ) ) {
-			$redux_file_string = array_reduce( $selected_import_files['redux'], function( $string, $item ) {
-				return sprintf( '%1$s%2$s -> %3$s %4$s', $string, $item['option_name'], $item['file_path'], PHP_EOL );
-			}, '' );
-		}
-
-		return PHP_EOL .
-		sprintf(
-			__( 'Initial max execution time = %s', 'pt-ocdi' ),
-			ini_get( 'max_execution_time' )
-		) . PHP_EOL .
-		sprintf(
-			__( 'Files info:%1$sSite URL = %2$s%1$sData file = %3$s%1$sWidget file = %4$s%1$sCustomizer file = %5$s%1$sRedux files:%1$s%6$s', 'pt-ocdi' ),
-			PHP_EOL,
-			get_site_url(),
-			empty( $selected_import_files['content'] ) ? esc_html__( 'not defined!', 'pt-ocdi' ) : $selected_import_files['content'],
-			empty( $selected_import_files['widgets'] ) ? esc_html__( 'not defined!', 'pt-ocdi' ) : $selected_import_files['widgets'],
-			empty( $selected_import_files['customizer'] ) ? esc_html__( 'not defined!', 'pt-ocdi' ) : $selected_import_files['customizer'],
-			empty( $redux_file_string ) ? esc_html__( 'not defined!', 'pt-ocdi' ) : $redux_file_string
-		);
-	}
-
-
-	/**
-	 * Write the error to the log file and send the AJAX response.
-	 *
-	 * @param string $error_text text to display in the log file and in the AJAX response.
-	 * @param string $log_file_path path to the log file.
-	 * @param string $separator title separating the old and new content.
-	 */
-	public static function log_error_and_send_ajax_response( $error_text, $log_file_path, $separator = '' ) {
-		// Add this error to log file.
-		$log_added = self::append_to_file(
-			$error_text,
-			$log_file_path,
-			$separator
-		);
-
-		// Send JSON Error response to the AJAX call.
-		wp_send_json( $error_text );
-	}
-
-
 	/**
 	 * Set the $demo_import_start_time class variable with the current date and time string.
 	 */
 	public static function set_demo_import_start_time() {
-		self::$demo_import_start_time = date( apply_filters( 'pt-ocdi/date_format_for_file_names', 'Y-m-d__H-i-s' ) );
+		self::$demo_import_start_time = date( apply_filters( 'mybooking-templates-importer/date_format_for_file_names', 'Y-m-d__H-i-s' ) );
 	}
 
 
@@ -658,11 +369,11 @@ class Helpers {
 
 
 	/**
-	 * Set the OCDI transient with the current importer data.
+	 * Set the MybookingTemplatesImporter transient with the current importer data.
 	 *
 	 * @param array $data Data to be saved to the transient.
 	 */
-	public static function set_ocdi_import_data_transient( $data ) {
-		set_transient( 'ocdi_importer_data', $data, 0.1 * HOUR_IN_SECONDS );
+	public static function set_mybookingTemplatesImporter_import_data_transient( $data ) {
+		set_transient( 'mybookingTemplatesImporter_importer_data', $data, 0.1 * HOUR_IN_SECONDS );
 	}
 }

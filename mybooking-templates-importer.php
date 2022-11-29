@@ -3,8 +3,8 @@
 /*
 Plugin Name: Mybooking Templates Importer
 Plugin URI: https://mybooking.es/
-Description: Reservation templates importer for Mybooking theme and MyBooking Reservation Engine. It allows to creating a renting or accomoodation website in minutes. 
-Version: 1.0.0
+Description: Reservation templates importer for Mybooking theme and MyBooking Reservation Engine. Create a renting or accomoodation website in minutes. 
+Version: 1.0.1
 Author: mybooking
 Author URI: https://mybooking.es
 License: GPL3

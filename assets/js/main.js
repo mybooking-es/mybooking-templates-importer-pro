@@ -234,18 +234,18 @@ jQuery( function ( $ ) {
 			previewImageContent = '<p>' + mybookingTemplatesImporter.texts.missing_preview_image + '</p>';
 		}
 		else {
-			previewImageContent = '<div class="mybookingTemplatesImporter__modal-image-container"><img src="' + currentFilePreviewImage + '" alt="' + mybookingTemplatesImporter.import_files[ selectedImportID ]['import_file_name'] + '"></div>'
+			previewImageContent = '<div class="mybooking-templates-importer__modal-image-container"><img src="' + currentFilePreviewImage + '" alt="' + mybookingTemplatesImporter.import_files[ selectedImportID ]['import_file_name'] + '"></div>'
 		}
 
 		// Prepare notice output.
 		if( '' !== importNotice ) {
-			importNoticeContent = '<div class="mybookingTemplatesImporter__modal-notice  mybookingTemplatesImporter__demo-import-notice">' + importNotice + '</div>';
+			importNoticeContent = '<div class="mybooking-templates-importer__modal-notice  mybookingTemplatesImporter__demo-import-notice">' + importNotice + '</div>';
 		}
 
 		// Populate the dialog content.
 		$dialogContiner.prop( 'title', mybookingTemplatesImporter.texts.dialog_title );
 		$dialogContiner.html(
-			'<p class="mybookingTemplatesImporter__modal-item-title">' + mybookingTemplatesImporter.import_files[ selectedImportID ]['import_file_name'] + '</p>' +
+			'<p class="mybooking-templates-importer__modal-item-title">' + mybookingTemplatesImporter.import_files[ selectedImportID ]['import_file_name'] + '</p>' +
 			previewImageContent +
 			importNoticeContent
 		);
@@ -258,11 +258,11 @@ jQuery( function ( $ ) {
 	 * The main AJAX call, which executes the import process.
 	 *
 	 * @param FormData data The data to be passed to the AJAX call.
-	 * 
+	 *
 	 * action
 	 * security
 	 * selected => The selected template to import
-	 * 
+	 *
 	 */
 	function ajaxCall( data ) {
 		$.ajax({

@@ -135,7 +135,7 @@ class MybookingTemplatesImport {
 		$this->plugin_page_setup = apply_filters( 'mybooking-templates-importer/plugin_page_setup', array(
 			'parent_slug' => 'themes.php',
 			'page_title'  => esc_html__( 'Mybooking Templates Importer' , 'mybooking-templates-importer' ),
-			'menu_title'  => esc_html__( 'Mybooking Importer' , 'mybooking-templates-importer' ),
+			'menu_title'  => esc_html__( 'Mybooking Templates' , 'mybooking-templates-importer' ),
 			'capability'  => 'import',
 			'menu_slug'   => 'mybooking-templates-import',
 		) );
